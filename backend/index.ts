@@ -7,9 +7,9 @@ import path from "path";
 const swaggerSpec = {
   openapi: "3.0.0",
   info: {
-    title: "Wordle API",
-    version: "1.0.0",
-    description: "Random-word & validity endpoints for the Wordle game.",
+    title: "Game Hub API",
+    version: "2.0.0",
+    description: "API endpoints for Wordle, Connections, Sudoku, and Numbers games.",
   },
   servers: [{ url: "https://wordle-game-backend.vercel.app/api/" }],
   paths: {
@@ -53,6 +53,79 @@ const swaggerSpec = {
                   type: "object",
                   properties: {
                     valid: { type: "boolean", example: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/connections/puzzle": {
+      get: {
+        summary: "Get a Connections puzzle",
+        responses: {
+          "200": {
+            description: "A Connections puzzle with groups",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    groups: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          category: { type: "string" },
+                          words: { type: "array", items: { type: "string" } },
+                          difficulty: { type: "string" },
+                          color: { type: "string" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/sudoku/puzzle": {
+      get: {
+        summary: "Get a Sudoku puzzle",
+        responses: {
+          "200": {
+            description: "A Sudoku puzzle and its solution",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    puzzle: { type: "array" },
+                    solution: { type: "array" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/numbers/puzzle": {
+      get: {
+        summary: "Get a Numbers puzzle",
+        responses: {
+          "200": {
+            description: "A Numbers puzzle with target",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    numbers: { type: "array", items: { type: "number" } },
+                    target: { type: "number" },
                   },
                 },
               },
@@ -225,6 +298,120 @@ app.get("/api/random-word", (_req, res) => {
 app.get("/api/word-valid/:word", (req, res) => {
   const guess = String(req.params.word).toLowerCase();
   res.json({ valid: validWords!.has(guess) });
+});
+
+// ─── CONNECTIONS GAME ───────────────────────────────────────────────────────
+const connectionsPuzzles = [
+  {
+    groups: [
+      { category: "Types of Fruit", words: ["APPLE", "BANANA", "ORANGE", "GRAPE"], difficulty: "easy", color: "lime" },
+      { category: "Programming Languages", words: ["PYTHON", "JAVA", "RUBY", "SWIFT"], difficulty: "medium", color: "yellow" },
+      { category: "US States", words: ["TEXAS", "FLORIDA", "NEVADA", "MAINE"], difficulty: "hard", color: "orange" },
+      { category: "Words that follow 'FIRE'", words: ["PLACE", "WORKS", "FLY", "BALL"], difficulty: "tricky", color: "purple" },
+    ],
+  },
+  {
+    groups: [
+      { category: "Coffee Drinks", words: ["LATTE", "MOCHA", "ESPRESSO", "CAPPUCCINO"], difficulty: "easy", color: "lime" },
+      { category: "Precious Gems", words: ["DIAMOND", "RUBY", "EMERALD", "SAPPHIRE"], difficulty: "medium", color: "yellow" },
+      { category: "Web Browsers", words: ["CHROME", "SAFARI", "FIREFOX", "EDGE"], difficulty: "hard", color: "orange" },
+      { category: "___BOARD", words: ["CARD", "KEY", "CLIP", "SCORE"], difficulty: "tricky", color: "purple" },
+    ],
+  },
+  {
+    groups: [
+      { category: "Days of the Week", words: ["MONDAY", "TUESDAY", "FRIDAY", "SUNDAY"], difficulty: "easy", color: "lime" },
+      { category: "Chess Pieces", words: ["KING", "QUEEN", "ROOK", "BISHOP"], difficulty: "medium", color: "yellow" },
+      { category: "Social Media", words: ["TWITTER", "FACEBOOK", "INSTAGRAM", "TIKTOK"], difficulty: "hard", color: "orange" },
+      { category: "Things that Ring", words: ["BELL", "PHONE", "ALARM", "DOORBELL"], difficulty: "tricky", color: "purple" },
+    ],
+  },
+];
+
+app.get("/api/connections/puzzle", (_req, res) => {
+  const puzzle = connectionsPuzzles[Math.floor(Math.random() * connectionsPuzzles.length)];
+  res.json(puzzle);
+});
+
+// ─── SUDOKU GAME ────────────────────────────────────────────────────────────
+function generateSudoku() {
+  // Pre-generated valid sudoku puzzles (puzzle, solution pairs)
+  const puzzles = [
+    {
+      puzzle: [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9],
+      ],
+      solution: [
+        [5, 3, 4, 6, 7, 8, 9, 1, 2],
+        [6, 7, 2, 1, 9, 5, 3, 4, 8],
+        [1, 9, 8, 3, 4, 2, 5, 6, 7],
+        [8, 5, 9, 7, 6, 1, 4, 2, 3],
+        [4, 2, 6, 8, 5, 3, 7, 9, 1],
+        [7, 1, 3, 9, 2, 4, 8, 5, 6],
+        [9, 6, 1, 5, 3, 7, 2, 8, 4],
+        [2, 8, 7, 4, 1, 9, 6, 3, 5],
+        [3, 4, 5, 2, 8, 6, 1, 7, 9],
+      ],
+    },
+    {
+      puzzle: [
+        [0, 0, 0, 2, 6, 0, 7, 0, 1],
+        [6, 8, 0, 0, 7, 0, 0, 9, 0],
+        [1, 9, 0, 0, 0, 4, 5, 0, 0],
+        [8, 2, 0, 1, 0, 0, 0, 4, 0],
+        [0, 0, 4, 6, 0, 2, 9, 0, 0],
+        [0, 5, 0, 0, 0, 3, 0, 2, 8],
+        [0, 0, 9, 3, 0, 0, 0, 7, 4],
+        [0, 4, 0, 0, 5, 0, 0, 3, 6],
+        [7, 0, 3, 0, 1, 8, 0, 0, 0],
+      ],
+      solution: [
+        [4, 3, 5, 2, 6, 9, 7, 8, 1],
+        [6, 8, 2, 5, 7, 1, 4, 9, 3],
+        [1, 9, 7, 8, 3, 4, 5, 6, 2],
+        [8, 2, 6, 1, 9, 5, 3, 4, 7],
+        [3, 7, 4, 6, 8, 2, 9, 1, 5],
+        [9, 5, 1, 7, 4, 3, 6, 2, 8],
+        [5, 1, 9, 3, 2, 6, 8, 7, 4],
+        [2, 4, 8, 9, 5, 7, 1, 3, 6],
+        [7, 6, 3, 4, 1, 8, 2, 5, 9],
+      ],
+    },
+  ];
+
+  return puzzles[Math.floor(Math.random() * puzzles.length)];
+}
+
+app.get("/api/sudoku/puzzle", (_req, res) => {
+  const puzzle = generateSudoku();
+  res.json(puzzle);
+});
+
+// ─── NUMBERS GAME ───────────────────────────────────────────────────────────
+function generateNumbersPuzzle() {
+  const puzzles = [
+    { numbers: [3, 5, 7, 10, 25, 50], target: 347 },
+    { numbers: [2, 4, 6, 8, 10, 12], target: 48 },
+    { numbers: [1, 3, 5, 10, 25, 100], target: 156 },
+    { numbers: [5, 6, 7, 8, 9, 10], target: 432 },
+    { numbers: [2, 3, 4, 5, 25, 50], target: 237 },
+    { numbers: [1, 2, 3, 4, 5, 10], target: 42 },
+  ];
+
+  return puzzles[Math.floor(Math.random() * puzzles.length)];
+}
+
+app.get("/api/numbers/puzzle", (_req, res) => {
+  const puzzle = generateNumbersPuzzle();
+  res.json(puzzle);
 });
 
 app.get("/swagger.json", (_req, res) => {
