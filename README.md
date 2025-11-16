@@ -68,28 +68,6 @@ Use mathematical operations (+, -, ×, ÷) to reach a target number from a set o
 - Division requires whole number results
 - Multiple difficulty levels
 
-## 📸 Screenshots
-
-### Home Page - Game Selection
-![Home Page](screenshots/home.png)
-*Clean, animated gradient background with all available games*
-
-### Wordle Game
-![Wordle Game](screenshots/wordle.png)
-*Classic Wordle gameplay with color-coded feedback*
-
-### Connections Game
-![Connections Game](screenshots/connections.png)
-*Group words by common categories*
-
-### Sudoku Game
-![Sudoku Game](screenshots/sudoku.png)
-*Traditional 9×9 Sudoku with visual cell highlighting*
-
-### Numbers Game
-![Numbers Game](screenshots/numbers.png)
-*Mathematical puzzle game with operation tracking*
-
 ## 🚀 Tech Stack
 
 ### Frontend
@@ -142,7 +120,7 @@ Use mathematical operations (+, -, ×, ÷) to reach a target number from a set o
 │   │   ├── SudokuGame.tsx    # Sudoku game logic
 │   │   └── NumbersGame.tsx   # Numbers game logic
 │   │
-│   ├── (Wordle components)   # Original Wordle components
+│   ├── (Wordle components)   # Wordle components
 │   │   ├── TileRow.tsx       # Row of 5 tiles
 │   │   ├── Tile.tsx          # Individual tile
 │   │   ├── Keyboard.tsx      # On-screen keyboard
@@ -356,7 +334,7 @@ Optional:
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 👨‍�💻 Author
+## 💻 Author
 
 **Son Nguyen**
 - GitHub: [@hoangsonww](https://github.com/hoangsonww)
@@ -389,108 +367,3 @@ For issues, questions, or suggestions:
 
 <p align="center">Made with ❤️ by Son Nguyen</p>
 <p align="center">⭐ Star this repo if you find it helpful!</p>
-
-## 🌟 Advanced Features
-
-This platform now includes **40+ production-ready features** to provide a truly enterprise-grade experience:
-
-### 🎨 User Experience
-- **Dark Mode** - Toggle between light and dark themes with automatic saving
-- **Animations** - Smooth Framer Motion animations throughout
-- **Toast Notifications** - Elegant feedback with React Hot Toast
-- **Responsive Design** - Perfect on desktop, tablet, and mobile
-
-### 📊 Advanced Statistics
-- **Comprehensive Tracking** - Detailed stats for every game
-- **Visual Charts** - Beautiful charts with Recharts library
-- **Achievements System** - 8 unlockable achievements with progress tracking
-- **Performance Metrics** - Track your speed, streaks, and averages
-
-### ⚙️ Customizable Settings
-- **Appearance** - Dark mode, high contrast, font sizing
-- **Gameplay** - Timer toggle, hints system, difficulty levels
-- **Accessibility** - Reduced motion, keyboard navigation
-- **Preferences** - Save all settings to localStorage
-
-### 🚀 Performance Optimizations
-- **Code Splitting** - Lazy loading for optimal performance
-- **State Management** - Zustand for lightweight global state
-- **Error Boundaries** - Graceful error handling
-- **PWA Ready** - Installable as a progressive web app
-
-### 🎮 Game Enhancements
-- **Timer Component** - Optional speed challenge mode
-- **Share Results** - Share your victories on social media
-- **Help Modals** - Tutorial system for each game
-- **Keyboard Support** - Full keyboard navigation
-
-### 📱 Navigation
-- **Settings Page** - Comprehensive settings management
-- **Statistics Page** - Detailed analytics dashboard
-- **Smooth Routing** - React Router with transitions
-- **Header Links** - Quick access to settings and stats
-
-## 📸 New Screenshots
-
-### Settings Page
-Customize your experience with comprehensive settings including dark mode, sound, timer, hints, and accessibility options.
-
-### Statistics Dashboard
-Track your performance across all games with beautiful charts, detailed metrics, and achievement progress.
-
-### Enhanced Home Page
-View quick stats overview, achievements progress, and animated game cards with individual game statistics.
-
-## 🏆 Achievements
-
-Unlock achievements as you play:
-- 🎉 First Victory
-- 🔥 Hot Streak (5 wins in a row)
-- ⚡ Unstoppable (10 wins in a row)
-- 🎮 Jack of All Trades (Win all game types)
-- 🧠 Perfect Mind (Perfect Connections game)
-- 💨 Speed Demon (Win under 60 seconds)
-- 💯 Century Club (100 total games)
-- 📝 Word Master (50 Wordle wins)
-
-## 📊 Statistics Tracking
-
-The platform now tracks comprehensive statistics:
-- **Per-Game Metrics** - Wins, losses, averages, and speeds
-- **Visual Charts** - Bar charts, pie charts, and distributions
-- **Streaks** - Current and maximum win streaks
-- **Personal Bests** - Fastest times and best performances
-
-## ⚡ Performance
-
-Optimized for speed and efficiency:
-- **Bundle Size** - Code splitting reduces initial load (~78KB gzipped)
-- **Lazy Loading** - Games loaded on demand (~2-7KB each)
-- **Caching** - Smart caching strategies
-- **Analytics** - Vercel Analytics for monitoring
-
-## 🔧 Technical Stack (Updated)
-
-### New Dependencies
-- **Zustand** - State management
-- **Framer Motion** - Animations
-- **React Hot Toast** - Notifications
-- **Recharts** - Data visualization
-- **Date-fns** - Date utilities
-
-### Architecture
-- **Component-based** - Modular and reusable
-- **Type-safe** - Full TypeScript coverage
-- **Performance-first** - Code splitting and optimization
-- **Accessible** - WCAG compliant features
-
-## 🎯 Future Enhancements
-
-Planned features for future releases:
-- User authentication
-- Cloud save/sync
-- Multiplayer modes
-- More games
-- Social features
-- Mobile apps
-
