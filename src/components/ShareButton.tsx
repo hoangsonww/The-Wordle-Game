@@ -8,7 +8,11 @@ interface ShareButtonProps {
   shareText: string;
 }
 
-export default function ShareButton({ gameName, score, shareText }: ShareButtonProps) {
+export default function ShareButton({
+  gameName,
+  score,
+  shareText,
+}: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -22,7 +26,7 @@ export default function ShareButton({ gameName, score, shareText }: ShareButtonP
         });
         toast.success("Shared successfully!");
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
+        if ((err as Error).name !== "AbortError") {
           copyToClipboard(text);
         }
       }

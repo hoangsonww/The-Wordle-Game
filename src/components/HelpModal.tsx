@@ -8,7 +8,12 @@ interface HelpModalProps {
   children: React.ReactNode;
 }
 
-export default function HelpModal({ isOpen, onClose, title, children }: HelpModalProps) {
+export default function HelpModal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: HelpModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (

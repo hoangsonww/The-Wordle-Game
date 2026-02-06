@@ -7,9 +7,10 @@ import path from "path";
 const swaggerSpec = {
   openapi: "3.0.0",
   info: {
-    title: "Game Hub API",
+    title: "PuzzleForge API",
     version: "2.0.0",
-    description: "API endpoints for Wordle, Connections, Sudoku, and Numbers games.",
+    description:
+      "API endpoints for Wordle, Connections, Sudoku, Numbers, Memory Match, and Minesweeper.",
   },
   servers: [{ url: "https://wordle-game-backend.vercel.app/api/" }],
   paths: {
@@ -126,6 +127,76 @@ const swaggerSpec = {
                   properties: {
                     numbers: { type: "array", items: { type: "number" } },
                     target: { type: "number" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/memory/puzzle": {
+      get: {
+        summary: "Get a Memory Match puzzle",
+        parameters: [
+          {
+            name: "difficulty",
+            in: "query",
+            required: false,
+            schema: { type: "string", enum: ["easy", "medium", "hard"] },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "A set of pairs for Memory Match",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    pairs: { type: "array", items: { type: "string" } },
+                    difficulty: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/minesweeper/board": {
+      get: {
+        summary: "Get a Minesweeper board",
+        parameters: [
+          {
+            name: "difficulty",
+            in: "query",
+            required: false,
+            schema: { type: "string", enum: ["easy", "medium", "hard"] },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "A Minesweeper board with mine positions",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    width: { type: "number" },
+                    height: { type: "number" },
+                    minesCount: { type: "number" },
+                    mines: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          row: { type: "number" },
+                          col: { type: "number" },
+                        },
+                      },
+                    },
+                    difficulty: { type: "string" },
                   },
                 },
               },
@@ -304,32 +375,93 @@ app.get("/api/word-valid/:word", (req, res) => {
 const connectionsPuzzles = [
   {
     groups: [
-      { category: "Types of Fruit", words: ["APPLE", "BANANA", "ORANGE", "GRAPE"], difficulty: "easy", color: "lime" },
-      { category: "Programming Languages", words: ["PYTHON", "JAVA", "RUBY", "SWIFT"], difficulty: "medium", color: "yellow" },
-      { category: "US States", words: ["TEXAS", "FLORIDA", "NEVADA", "MAINE"], difficulty: "hard", color: "orange" },
-      { category: "Words that follow 'FIRE'", words: ["PLACE", "WORKS", "FLY", "BALL"], difficulty: "tricky", color: "purple" },
+      {
+        category: "Types of Fruit",
+        words: ["APPLE", "BANANA", "ORANGE", "GRAPE"],
+        difficulty: "easy",
+        color: "lime",
+      },
+      {
+        category: "Programming Languages",
+        words: ["PYTHON", "JAVA", "RUBY", "SWIFT"],
+        difficulty: "medium",
+        color: "yellow",
+      },
+      {
+        category: "US States",
+        words: ["TEXAS", "FLORIDA", "NEVADA", "MAINE"],
+        difficulty: "hard",
+        color: "orange",
+      },
+      {
+        category: "Words that follow 'FIRE'",
+        words: ["PLACE", "WORKS", "FLY", "BALL"],
+        difficulty: "tricky",
+        color: "purple",
+      },
     ],
   },
   {
     groups: [
-      { category: "Coffee Drinks", words: ["LATTE", "MOCHA", "ESPRESSO", "CAPPUCCINO"], difficulty: "easy", color: "lime" },
-      { category: "Precious Gems", words: ["DIAMOND", "RUBY", "EMERALD", "SAPPHIRE"], difficulty: "medium", color: "yellow" },
-      { category: "Web Browsers", words: ["CHROME", "SAFARI", "FIREFOX", "EDGE"], difficulty: "hard", color: "orange" },
-      { category: "___BOARD", words: ["CARD", "KEY", "CLIP", "SCORE"], difficulty: "tricky", color: "purple" },
+      {
+        category: "Coffee Drinks",
+        words: ["LATTE", "MOCHA", "ESPRESSO", "CAPPUCCINO"],
+        difficulty: "easy",
+        color: "lime",
+      },
+      {
+        category: "Precious Gems",
+        words: ["DIAMOND", "RUBY", "EMERALD", "SAPPHIRE"],
+        difficulty: "medium",
+        color: "yellow",
+      },
+      {
+        category: "Web Browsers",
+        words: ["CHROME", "SAFARI", "FIREFOX", "EDGE"],
+        difficulty: "hard",
+        color: "orange",
+      },
+      {
+        category: "___BOARD",
+        words: ["CARD", "KEY", "CLIP", "SCORE"],
+        difficulty: "tricky",
+        color: "purple",
+      },
     ],
   },
   {
     groups: [
-      { category: "Days of the Week", words: ["MONDAY", "TUESDAY", "FRIDAY", "SUNDAY"], difficulty: "easy", color: "lime" },
-      { category: "Chess Pieces", words: ["KING", "QUEEN", "ROOK", "BISHOP"], difficulty: "medium", color: "yellow" },
-      { category: "Social Media", words: ["TWITTER", "FACEBOOK", "INSTAGRAM", "TIKTOK"], difficulty: "hard", color: "orange" },
-      { category: "Things that Ring", words: ["BELL", "PHONE", "ALARM", "DOORBELL"], difficulty: "tricky", color: "purple" },
+      {
+        category: "Days of the Week",
+        words: ["MONDAY", "TUESDAY", "FRIDAY", "SUNDAY"],
+        difficulty: "easy",
+        color: "lime",
+      },
+      {
+        category: "Chess Pieces",
+        words: ["KING", "QUEEN", "ROOK", "BISHOP"],
+        difficulty: "medium",
+        color: "yellow",
+      },
+      {
+        category: "Social Media",
+        words: ["TWITTER", "FACEBOOK", "INSTAGRAM", "TIKTOK"],
+        difficulty: "hard",
+        color: "orange",
+      },
+      {
+        category: "Things that Ring",
+        words: ["BELL", "PHONE", "ALARM", "DOORBELL"],
+        difficulty: "tricky",
+        color: "purple",
+      },
     ],
   },
 ];
 
 app.get("/api/connections/puzzle", (_req, res) => {
-  const puzzle = connectionsPuzzles[Math.floor(Math.random() * connectionsPuzzles.length)];
+  const puzzle =
+    connectionsPuzzles[Math.floor(Math.random() * connectionsPuzzles.length)];
   res.json(puzzle);
 });
 
@@ -414,6 +546,88 @@ app.get("/api/numbers/puzzle", (_req, res) => {
   res.json(puzzle);
 });
 
+// ─── MEMORY MATCH GAME ──────────────────────────────────────────────────────
+const memorySymbols = [
+  "COMET",
+  "CROWN",
+  "ORBIT",
+  "PLUME",
+  "GLYPH",
+  "EMBER",
+  "QUILL",
+  "NOVA",
+  "FABLE",
+  "RIDGE",
+  "PULSE",
+  "VAULT",
+  "MIRAGE",
+  "PRISM",
+  "AXIS",
+  "VIVID",
+  "FLARE",
+  "RUNE",
+];
+
+function getDifficulty(queryValue: unknown) {
+  const value = String(queryValue || "").toLowerCase();
+  if (value === "easy" || value === "medium" || value === "hard") {
+    return value as "easy" | "medium" | "hard";
+  }
+  return "medium";
+}
+
+function generateMemoryPuzzle(difficulty: "easy" | "medium" | "hard") {
+  const counts = { easy: 6, medium: 8, hard: 10 };
+  const pairsCount = counts[difficulty] ?? counts.medium;
+  const shuffled = [...memorySymbols].sort(() => Math.random() - 0.5);
+  return {
+    pairs: shuffled.slice(0, pairsCount),
+    difficulty,
+  };
+}
+
+app.get("/api/memory/puzzle", (req, res) => {
+  const difficulty = getDifficulty(req.query.difficulty);
+  const puzzle = generateMemoryPuzzle(difficulty);
+  res.json(puzzle);
+});
+
+// ─── MINESWEEPER GAME ───────────────────────────────────────────────────────
+function generateMinesweeperBoard(difficulty: "easy" | "medium" | "hard") {
+  const configs = {
+    easy: { width: 9, height: 9, mines: 10 },
+    medium: { width: 12, height: 12, mines: 20 },
+    hard: { width: 16, height: 16, mines: 40 },
+  };
+  const config = configs[difficulty] ?? configs.medium;
+  const positions = new Set<string>();
+
+  while (positions.size < config.mines) {
+    const row = Math.floor(Math.random() * config.height);
+    const col = Math.floor(Math.random() * config.width);
+    positions.add(`${row},${col}`);
+  }
+
+  const mines = Array.from(positions).map((pos) => {
+    const [row, col] = pos.split(",").map(Number);
+    return { row, col };
+  });
+
+  return {
+    width: config.width,
+    height: config.height,
+    minesCount: config.mines,
+    mines,
+    difficulty,
+  };
+}
+
+app.get("/api/minesweeper/board", (req, res) => {
+  const difficulty = getDifficulty(req.query.difficulty);
+  const board = generateMinesweeperBoard(difficulty);
+  res.json(board);
+});
+
 app.get("/swagger.json", (_req, res) => {
   res.json(swaggerSpec);
 });
@@ -423,7 +637,7 @@ app.get("/api-docs", (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wordle API Docs</title>
+  <title>PuzzleForge API Docs</title>
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css" />
   <link rel="icon" href="/favicon.ico" />
   <style>body{margin:0}</style>

@@ -1,13 +1,18 @@
-# Wordle Backend API
+# PuzzleForge Backend API
 
-A small Express-based serverless backend for serving Wordle-style random words and validating guesses.  
+A small Express-based serverless backend for serving PuzzleForge game data, including Wordle-style random words, Connections groups, Sudoku puzzles, and Numbers targets.  
 This backend:
 
 - Fetches the full Wordle word list from GitHub on cold start
 - Falls back to a built-in list of 108 common 5-letter words if the GitHub fetch fails
-- Exposes two primary endpoints:
+- Exposes primary endpoints:
   - `GET /api/random-word` → `{ word: "<5-letter word>" }`
   - `GET /api/word-valid/:word` → `{ valid: true|false }`
+  - `GET /api/connections/puzzle` → `{ groups: [...] }`
+  - `GET /api/sudoku/puzzle` → `{ puzzle: [...], solution: [...] }`
+  - `GET /api/numbers/puzzle` → `{ numbers: [...], target: number }`
+  - `GET /api/memory/puzzle` → `{ pairs: [...], difficulty: "easy|medium|hard" }`
+  - `GET /api/minesweeper/board` → `{ width, height, minesCount, mines: [...] }`
 - Serves Swagger/OpenAPI docs at `/api-docs` (with JSON at `/swagger.json`)
 - Redirects `/` → `/api-docs`
 - Serves a `favicon.ico` from `backend/favicon.ico`

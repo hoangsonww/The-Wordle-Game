@@ -44,9 +44,12 @@ export default class ErrorBoundary extends Component<Props, State> {
             }
           `}</style>
           <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md text-center">
-            <h1 className="text-4xl font-extrabold mb-4">Oops! Something went wrong</h1>
-            <p className="text-lg mb-6 text-gray-200">
-              We encountered an unexpected error. Please try refreshing the page.
+            <h1 className="text-4xl font-extrabold mb-4">
+              Oops! Something went wrong
+            </h1>
+            <p className="text-lg mb-6 text-white">
+              We encountered an unexpected error. Please try refreshing the
+              page.
             </p>
             {this.state.error && (
               <p className="text-sm bg-red-500/20 p-3 rounded-lg mb-6 font-mono text-left">

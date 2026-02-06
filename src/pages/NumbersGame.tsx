@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Plus, Minus, X, Divide, Undo } from "lucide-react";
+import { useStatsStore } from "../store/statsStore";
 
 interface Puzzle {
   numbers: number[];
@@ -27,6 +28,8 @@ export default function NumbersGame() {
   const [operations, setOperations] = useState<Operation[]>([]);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const startRef = useRef<number>(Date.now());
+  const { recordNumbersGame, recordNumbersStart } = useStatsStore();
 
   useEffect(() => {
     // Fetch puzzle from API
@@ -35,6 +38,8 @@ export default function NumbersGame() {
       .then((data) => {
         setPuzzle(data);
         setAvailableNumbers(data.numbers);
+        recordNumbersStart();
+        startRef.current = Date.now();
         setLoading(false);
       })
       .catch((err) => {
@@ -91,17 +96,25 @@ export default function NumbersGame() {
 
     // Remove the two selected numbers from available numbers
     const firstIndex = availableNumbers.indexOf(num1);
-    const secondIndex = availableNumbers.indexOf(num2, firstIndex === availableNumbers.lastIndexOf(num1) ? 0 : firstIndex + 1);
+    const secondIndex = availableNumbers.indexOf(
+      num2,
+      firstIndex === availableNumbers.lastIndexOf(num1) ? 0 : firstIndex + 1,
+    );
 
-    const updatedNumbers = availableNumbers.filter((_, idx) => idx !== firstIndex && idx !== secondIndex);
+    const updatedNumbers = availableNumbers.filter(
+      (_, idx) => idx !== firstIndex && idx !== secondIndex,
+    );
     setAvailableNumbers([...updatedNumbers, result]);
     setSelectedNumbers([]);
 
     // Check if target is reached
     if (result === puzzle?.target) {
       setGameWon(true);
-      const wins = parseInt(localStorage.getItem("numbers-wins") || "0");
-      localStorage.setItem("numbers-wins", String(wins + 1));
+      const elapsed = Math.max(
+        1,
+        Math.floor((Date.now() - startRef.current) / 1000),
+      );
+      recordNumbersGame(true, operations.length + 1, elapsed);
     }
   };
 
@@ -146,7 +159,8 @@ export default function NumbersGame() {
           <div className="bg-white/20 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md text-center">
             <h2 className="text-4xl font-extrabold mb-4">🎯 Target Reached!</h2>
             <p className="text-xl mb-2">
-              You reached {puzzle?.target} in {operations.length} move{operations.length !== 1 ? "s" : ""}!
+              You reached {puzzle?.target} in {operations.length} move
+              {operations.length !== 1 ? "s" : ""}!
             </p>
             <div className="bg-white/10 p-4 rounded-lg mb-6 text-left">
               <h3 className="font-bold mb-2">Your Solution:</h3>
@@ -172,7 +186,7 @@ export default function NumbersGame() {
     <Layout title="Numbers">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-6">
-          <p className="text-lg text-gray-200 mb-2">
+          <p className="text-lg text-white mb-2">
             Use the numbers to reach the target
           </p>
           <div className="text-5xl font-extrabold mb-4 bg-white/20 backdrop-blur-md py-4 px-8 rounded-lg inline-block">
@@ -191,7 +205,9 @@ export default function NumbersGame() {
 
         {/* Available Numbers */}
         <div className="mb-6">
-          <h3 className="text-center text-lg font-bold mb-3">Available Numbers</h3>
+          <h3 className="text-center text-lg font-bold mb-3">
+            Available Numbers
+          </h3>
           <div className="flex flex-wrap justify-center gap-3">
             {availableNumbers.map((num, idx) => (
               <button
@@ -219,7 +235,7 @@ export default function NumbersGame() {
               className={`w-14 h-14 rounded-lg font-bold text-2xl transition-all ${
                 selectedNumbers.length === 2
                   ? "bg-green-500 hover:bg-green-600 text-white"
-                  : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-600 text-white cursor-not-allowed"
               }`}
             >
               <Plus className="mx-auto" size={24} />
@@ -230,7 +246,7 @@ export default function NumbersGame() {
               className={`w-14 h-14 rounded-lg font-bold text-2xl transition-all ${
                 selectedNumbers.length === 2
                   ? "bg-blue-500 hover:bg-blue-600 text-white"
-                  : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-600 text-white cursor-not-allowed"
               }`}
             >
               <Minus className="mx-auto" size={24} />
@@ -241,7 +257,7 @@ export default function NumbersGame() {
               className={`w-14 h-14 rounded-lg font-bold text-2xl transition-all ${
                 selectedNumbers.length === 2
                   ? "bg-purple-500 hover:bg-purple-600 text-white"
-                  : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-600 text-white cursor-not-allowed"
               }`}
             >
               <X className="mx-auto" size={24} />
@@ -252,7 +268,7 @@ export default function NumbersGame() {
               className={`w-14 h-14 rounded-lg font-bold text-2xl transition-all ${
                 selectedNumbers.length === 2
                   ? "bg-orange-500 hover:bg-orange-600 text-white"
-                  : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-600 text-white cursor-not-allowed"
               }`}
             >
               <Divide className="mx-auto" size={24} />
@@ -268,7 +284,7 @@ export default function NumbersGame() {
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all ${
               operations.length > 0
                 ? "bg-white/20 hover:bg-white/30 text-white"
-                : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                : "bg-gray-600 text-white cursor-not-allowed"
             }`}
           >
             <Undo size={20} />

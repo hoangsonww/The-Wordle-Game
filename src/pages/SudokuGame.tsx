@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useStatsStore } from "../store/statsStore";
 
 type Board = number[][];
 
@@ -13,9 +14,14 @@ export default function SudokuGame() {
   const [userBoard, setUserBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
+  const [selectedCell, setSelectedCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [mistakes, setMistakes] = useState<number>(0);
+  const startRef = useRef<number>(Date.now());
+  const { recordSudokuGame, recordSudokuStart } = useStatsStore();
 
   useEffect(() => {
     // Fetch puzzle from API
@@ -25,6 +31,8 @@ export default function SudokuGame() {
         setPuzzle(data.puzzle);
         setSolution(data.solution);
         setUserBoard(data.puzzle.map((row: number[]) => [...row]));
+        recordSudokuStart();
+        startRef.current = Date.now();
         setLoading(false);
       })
       .catch((err) => {
@@ -64,13 +72,16 @@ export default function SudokuGame() {
 
     // Check if board matches solution
     const isComplete = board.every((row, i) =>
-      row.every((cell, j) => cell === solution[i][j])
+      row.every((cell, j) => cell === solution[i][j]),
     );
 
     if (isComplete) {
       setGameWon(true);
-      const wins = parseInt(localStorage.getItem("sudoku-wins") || "0");
-      localStorage.setItem("sudoku-wins", String(wins + 1));
+      const elapsed = Math.max(
+        1,
+        Math.floor((Date.now() - startRef.current) / 1000),
+      );
+      recordSudokuGame(true, mistakes, elapsed);
     }
   };
 
@@ -118,9 +129,7 @@ export default function SudokuGame() {
           <div className="bg-white/20 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md text-center">
             <h2 className="text-4xl font-extrabold mb-4">🎉 Puzzle Solved!</h2>
             <p className="text-xl mb-2">Congratulations!</p>
-            <p className="text-lg mb-6 text-gray-200">
-              Mistakes: {mistakes}
-            </p>
+            <p className="text-lg mb-6 text-white">Mistakes: {mistakes}</p>
             <button
               onClick={() => window.location.reload()}
               className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition-all shadow-lg"
@@ -137,10 +146,10 @@ export default function SudokuGame() {
     <Layout title="Sudoku">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-6">
-          <p className="text-lg text-gray-200 mb-2">
+          <p className="text-lg text-white mb-2">
             Fill the 9×9 grid with digits 1-9
           </p>
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-white">
             Each row, column, and 3×3 box must contain all digits
           </p>
           <div className="mt-3">
@@ -158,12 +167,14 @@ export default function SudokuGame() {
                 row.map((cell, colIdx) => {
                   const isGiven = puzzle && puzzle[rowIdx][colIdx] !== 0;
                   const isSelected =
-                    selectedCell?.row === rowIdx && selectedCell?.col === colIdx;
+                    selectedCell?.row === rowIdx &&
+                    selectedCell?.col === colIdx;
                   const isInSameRow = selectedCell?.row === rowIdx;
                   const isInSameCol = selectedCell?.col === colIdx;
                   const isInSameBox =
                     selectedCell &&
-                    Math.floor(rowIdx / 3) === Math.floor(selectedCell.row / 3) &&
+                    Math.floor(rowIdx / 3) ===
+                      Math.floor(selectedCell.row / 3) &&
                     Math.floor(colIdx / 3) === Math.floor(selectedCell.col / 3);
 
                   // Border classes for 3x3 boxes
@@ -197,7 +208,7 @@ export default function SudokuGame() {
                       {cell !== 0 ? cell : ""}
                     </button>
                   );
-                })
+                }),
               )}
             </div>
           </div>
@@ -222,7 +233,7 @@ export default function SudokuGame() {
           </button>
         </div>
 
-        <div className="text-center mt-6 text-sm text-gray-300">
+        <div className="text-center mt-6 text-sm text-white">
           <p>Click a cell and press a number (1-9) or use the buttons above</p>
           <p>Press Delete/Backspace to clear a cell</p>
         </div>

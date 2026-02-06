@@ -1,6 +1,6 @@
 {
-  "name": "wordle",
-  "description": "Wordle clone with a twist",
+  "name": "puzzleforge",
+  "description": "Multi-game puzzle hub featuring Wordle, Connections, Sudoku, Numbers, Memory Match, and Minesweeper",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -11,7 +11,7 @@ export default function GameWon({ target }: GameWonProps) {
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <h1 className="text-4xl font-bold text-lime-600">Congratulations!</h1>
-      <p className="mt-4 text-center text-slate-500">
+      <p className="mt-4 text-center text-white">
         Correct word: <strong className="font-bold">{target}</strong>
       </p>
       <div

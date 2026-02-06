@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import LoadingSpinner from "../components/LoadingSpinner";
 import TileRow from "../TileRow";
 import Keyboard from "../Keyboard";
 import GameWon from "../GameWon";
 import GameOver from "../GameOver";
+import { useStatsStore } from "../store/statsStore";
+import toast from "react-hot-toast";
 
 /**
  * WordleGame component is the main Wordle game page.
@@ -27,12 +29,16 @@ export default function WordleGame() {
   const [activeRow, setActiveRow] = useState<number>(0);
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const startRef = useRef<number>(Date.now());
+  const { recordWordleGame, recordWordleStart } = useStatsStore();
 
   useEffect(() => {
     fetch("https://wordle-game-backend.vercel.app/api/random-word")
       .then((res) => res.json())
       .then((data) => {
         setTargetWord(data.word);
+        startRef.current = Date.now();
+        recordWordleStart();
         setLoading(false);
       })
       .catch((err) => {
@@ -71,15 +77,13 @@ export default function WordleGame() {
 
   const makeGuess = async () => {
     if (currentGuess.length < 5) {
-      alert("Please enter a 5-letter word");
+      toast.error("Please enter a 5-letter word");
       return;
     }
 
     const isValid = await checkGuessValidity(currentGuess);
     if (!isValid) {
-      alert(
-        "This is not a valid word. Please delete your current guess and try again.",
-      );
+      toast.error("Not a valid word. Try again.");
       return;
     }
 
@@ -96,14 +100,21 @@ export default function WordleGame() {
     setTimeout(() => {
       if (guessUsed.toLowerCase() === targetWord.toLowerCase()) {
         setGameWon(true);
-        // Increment win count
-        const wins = parseInt(localStorage.getItem("wordle-wins") || "0");
-        localStorage.setItem("wordle-wins", String(wins + 1));
+        const elapsed = Math.max(
+          1,
+          Math.floor((Date.now() - startRef.current) / 1000),
+        );
+        recordWordleGame(true, rowUsed + 1, elapsed);
         return;
       }
 
       if (rowUsed >= 5) {
         setGameOver(true);
+        const elapsed = Math.max(
+          1,
+          Math.floor((Date.now() - startRef.current) / 1000),
+        );
+        recordWordleGame(false, rowUsed + 1, elapsed);
       }
     }, 100);
   };
@@ -184,7 +195,7 @@ export default function WordleGame() {
       <div className="w-full flex flex-col justify-center items-center py-8">
         {/* Subtitle */}
         <div className="text-center mb-8">
-          <h2 className="text-xl text-gray-200">
+          <h2 className="text-xl text-white">
             Can you guess the hidden word in 6 tries?
           </h2>
         </div>

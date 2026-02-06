@@ -8,6 +8,8 @@ const WordleGame = lazy(() => import("./pages/WordleGame"));
 const ConnectionsGame = lazy(() => import("./pages/ConnectionsGame"));
 const SudokuGame = lazy(() => import("./pages/SudokuGame"));
 const NumbersGame = lazy(() => import("./pages/NumbersGame"));
+const MemoryGame = lazy(() => import("./pages/MemoryGame"));
+const MinesweeperGame = lazy(() => import("./pages/MinesweeperGame"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Statistics = lazy(() => import("./pages/Statistics"));
 
@@ -17,17 +19,21 @@ const Statistics = lazy(() => import("./pages/Statistics"));
  */
 export default function App() {
   return (
-    <Suspense fallback={
-      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600">
-        <LoadingSpinner />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600">
+          <LoadingSpinner />
+        </div>
+      }
+    >
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/wordle" element={<WordleGame />} />
         <Route path="/connections" element={<ConnectionsGame />} />
         <Route path="/sudoku" element={<SudokuGame />} />
         <Route path="/numbers" element={<NumbersGame />} />
+        <Route path="/memory" element={<MemoryGame />} />
+        <Route path="/minesweeper" element={<MinesweeperGame />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/statistics" element={<Statistics />} />
       </Routes>

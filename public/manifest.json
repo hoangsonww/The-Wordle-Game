@@ -1,11 +1,11 @@
 {
-  "name": "The Wordle Game",
-  "short_name": "Wordle",
-  "description": "Guess the hidden 5-letter word in 6 tries. A Wordle clone built with React and Tailwind CSS.",
+  "name": "PuzzleForge",
+  "short_name": "PuzzleForge",
+  "description": "A multi-game puzzle hub featuring Wordle, Connections, Sudoku, and Numbers.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#facc15",
+  "theme_color": "#f97316",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useStatsStore } from "../store/statsStore";
 
 interface Group {
   category: string;
@@ -23,6 +24,8 @@ export default function ConnectionsGame() {
   const [gameWon, setGameWon] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const startRef = useRef<number>(Date.now());
+  const { recordConnectionsGame, recordConnectionsStart } = useStatsStore();
 
   const MAX_MISTAKES = 4;
 
@@ -35,6 +38,8 @@ export default function ConnectionsGame() {
         const allWords = data.groups.flatMap((g: Group) => g.words);
         // Shuffle words
         setRemainingWords(allWords.sort(() => Math.random() - 0.5));
+        recordConnectionsStart();
+        startRef.current = Date.now();
         setLoading(false);
       })
       .catch((err) => {
@@ -77,15 +82,18 @@ export default function ConnectionsGame() {
       setMessage(`Correct! ${correctGroup.category}`);
       setSolvedGroups([...solvedGroups, correctGroup]);
       setRemainingWords(
-        remainingWords.filter((w) => !selectedWords.includes(w))
+        remainingWords.filter((w) => !selectedWords.includes(w)),
       );
       setSelectedWords([]);
 
       // Check if all groups are solved
       if (solvedGroups.length + 1 === puzzle.length) {
         setGameWon(true);
-        const wins = parseInt(localStorage.getItem("connections-wins") || "0");
-        localStorage.setItem("connections-wins", String(wins + 1));
+        const elapsed = Math.max(
+          1,
+          Math.floor((Date.now() - startRef.current) / 1000),
+        );
+        recordConnectionsGame(true, mistakes, elapsed);
       }
     } else {
       // Wrong guess
@@ -96,7 +104,7 @@ export default function ConnectionsGame() {
       let oneAway = false;
       for (const group of puzzle) {
         const matchCount = selectedWords.filter((w) =>
-          group.words.includes(w)
+          group.words.includes(w),
         ).length;
         if (matchCount === 3) {
           oneAway = true;
@@ -115,6 +123,11 @@ export default function ConnectionsGame() {
       // Check if game over
       if (newMistakes >= MAX_MISTAKES) {
         setGameOver(true);
+        const elapsed = Math.max(
+          1,
+          Math.floor((Date.now() - startRef.current) / 1000),
+        );
+        recordConnectionsGame(false, newMistakes, elapsed);
       }
     }
 
@@ -164,9 +177,12 @@ export default function ConnectionsGame() {
       <Layout title="Connections">
         <div className="flex flex-col justify-center items-center py-12 px-4">
           <div className="bg-white/20 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md text-center">
-            <h2 className="text-4xl font-extrabold mb-4">🎉 Congratulations!</h2>
+            <h2 className="text-4xl font-extrabold mb-4">
+              🎉 Congratulations!
+            </h2>
             <p className="text-xl mb-6">
-              You found all the connections with {mistakes} mistake{mistakes !== 1 ? "s" : ""}!
+              You found all the connections with {mistakes} mistake
+              {mistakes !== 1 ? "s" : ""}!
             </p>
             <button
               onClick={() => window.location.reload()}
@@ -190,11 +206,13 @@ export default function ConnectionsGame() {
               You've used all {MAX_MISTAKES} mistakes. Better luck next time!
             </p>
             <div className="mb-6">
-              <h3 className="text-lg font-bold mb-2">The correct groups were:</h3>
+              <h3 className="text-lg font-bold mb-2">
+                The correct groups were:
+              </h3>
               {puzzle?.map((group, idx) => (
                 <div key={idx} className="mb-2">
                   <p className="font-semibold">{group.category}</p>
-                  <p className="text-sm text-gray-200">{group.words.join(", ")}</p>
+                  <p className="text-sm text-white">{group.words.join(", ")}</p>
                 </div>
               ))}
             </div>
@@ -214,7 +232,7 @@ export default function ConnectionsGame() {
     <Layout title="Connections">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-6">
-          <p className="text-lg text-gray-200 mb-2">
+          <p className="text-lg text-white mb-2">
             Find groups of four items that share something in common
           </p>
           <div className="flex justify-center gap-6 text-sm">
@@ -291,7 +309,7 @@ export default function ConnectionsGame() {
             className={`px-8 py-3 rounded-lg font-bold transition-all ${
               selectedWords.length === 4
                 ? "bg-purple-500 hover:bg-purple-600 text-white"
-                : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                : "bg-gray-600 text-white cursor-not-allowed"
             }`}
           >
             Submit
