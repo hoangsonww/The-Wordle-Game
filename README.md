@@ -274,6 +274,10 @@ npm run build
 - **Swagger UI**: [https://wordle-game-backend.vercel.app/api-docs](https://wordle-game-backend.vercel.app/api-docs)
 - **OpenAPI Spec**: [https://wordle-game-backend.vercel.app/swagger.json](https://wordle-game-backend.vercel.app/swagger.json)
 
+<p align="center">
+  <img src="screenshots/swagger.png" alt="Swagger UI" />
+</p>
+
 ### Endpoints
 
 | Method | Path                      | Description              | Response                                                        |
